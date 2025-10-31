@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Універсальний Генератор Шейдерів MCPE (v6.1 - Виправлено)</title>
+    <style>
+        :root {
+            --mc-blue: #2196F3;
+            --mc-dark: #333;
+            --mc-light: #f4f4f4;
+            --mc-green: #4CAF50;
+            --mc-accent: #FF9800;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--mc-light);
+            color: var(--mc-dark);
+            padding: 20px;
+            margin: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: var(--mc-blue);
+            margin-bottom: 20px;
+        }
+        /* Стилі для вкладок (Tabs) */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #555;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+        .tab-button.active {
+            color: var(--mc-blue);
+            border-bottom: 4px solid var(--mc-blue);
+        }
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+        .tab-content.active {
+            display: flex; 
+            gap: 20px;
+        }
+        .controls-panel {
+            flex-basis: 50%;
+            min-width: 400px;
+        }
+        .preview-panel {
+            flex-basis: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+        }
+        .preview-panel img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            height: auto;
+        }
+        .section-header {
+            color: var(--mc-dark);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .control-group label {
+            flex-basis: 40%;
+            font-weight: bold;
+            margin: 0;
+        }
+        .control-group input[type="range"] {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .control-group input[type="color"] {
+            flex-basis: 80px;
+            height: 30px;
+            vertical-align: middle;
+        }
+        .control-group span {
+            flex-basis: 15%;
+            font-weight: normal;
+            color: var(--mc-green);
+            text-align: right;
+        }
+        .checkbox-group {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            background-color: var(--mc-accent);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .download-btn:hover {
+            background-color: #E68A00;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>✨ Універсальний Генератор Шейдерів MCPE (v6.1 - Виправлено)</h1>
+        <p>Налаштуйте візуальні параметри, виберіть функції для активації та згенеруйте оптимізований пакет.</p>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'water')">🌊 Вода & Анімація</button>
+            <button class="tab-button" onclick="openTab(event, 'lighting')">💡 Освітлення</button>
+            <button class="tab-button" onclick="openTab(event, 'fog')">🌫️ Атмосфера</button>
+            <button class="tab-button" onclick="openTab(event, 'combiner')">🔗 Об'єднання</button>
+        </div>
+
+        <div id="water" class="tab-content active">
+            <div class="controls-panel">
+                <h2 class="section-header">✅ Вибіркове Включення Функцій Шейдерів (Оптимізація)</h2>
+                <div class="controls checkbox-group">
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="enable-water-reflection" checked onchange="updateSettings()"> 
+                            **Відбиття Води (Reflection):** Високе навантаження.
+                        </label>
+                        <label>
+                            <input type="checkbox" id="enable-pbr" checked onchange="updateSettings()">
+                            **Металічний Відблиск (PBR/Specular).**
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="enable-sway-animation" checked onchange="updateSettings()">
+                            **Похитування Рослин (Sway).**
+                        </label>
+                        <label>
+                            <input type="checkbox" id="enable-godrays" checked onchange="updateSettings()">
+                            **Сонячні Промені (God Rays).**
+                        </label>
+                    </div>
+                </div>
+
+                <h2 class="section-header">🌊 Налаштування Води</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="water-realism-slider">Рівень Реалістичності (Refraction/Reflection):</label>
+                        <input type="range" id="water-realism-slider" min="0" max="3" step="1" value="2" oninput="updateSettings()">
+                        <span id="water-realism-value">Рівень 2</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="water-depth-slider">Глибина Води (Вплив на колір):</label>
+                        <input type="range" id="water-depth-slider" min="5" max="50" step="5" value="20" oninput="updateSettings()">
+                        <span id="water-depth-value">20 м</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="ripple-intensity-slider">Інтенсивність Хвильового Похитування:</label>
+                        <input type="range" id="ripple-intensity-slider" min="0.0" max="1.0" step="0.1" value="0.3" oninput="updateSettings()">
+                        <span id="ripple-intensity-value">0.3</span>
+                    </div>
+                </div>
+
+                <h2 class="section-header">🍃 Анімація Рослин та Хмар</h2>
+                <div class="controls">
+                     <div class="control-group">
+                        <label for="grass-sway-speed-slider">Швидкість Похитування Трави/Ліан:</label>
+                        <input type="range" id="grass-sway-speed-slider" min="0.5" max="3.0" step="0.5" value="1.5" oninput="updateSettings()">
+                        <span id="grass-sway-speed-value">1.5x</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="leaves-sway-amp-slider">Амплітуда Похитування Листя:</label>
+                        <input type="range" id="leaves-sway-amp-slider" min="0.0" max="1.0" step="0.1" value="0.4" oninput="updateSettings()">
+                        <span id="leaves-sway-amp-value">0.4</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="cloud-speed-slider">Швидкість Руху Хмар:</label>
+                        <input type="range" id="cloud-speed-slider" min="0.0" max="2.0" step="0.1" value="0.8" oninput="updateSettings()">
+                        <span id="cloud-speed-value">0.8x</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
+        </div>
+
+        <div id="lighting" class="tab-content">
+            <div class="controls-panel">
+                <h2 class="section-header">💡 Налаштування Освітлення та Металів (PBR)</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="pbr-reflectivity-slider">Інтенсивність Металічного Відблиску:</label>
+                        <input type="range" id="pbr-reflectivity-slider" min="0.0" max="1.0" step="0.1" value="0.7" oninput="updateSettings()">
+                        <span id="pbr-reflectivity-value">0.7</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="sunlight-intensity-slider">Інтенсивність Сонячного Світла:</label>
+                        <input type="range" id="sunlight-intensity-slider" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateSettings()">
+                        <span id="sunlight-intensity-value">1.0x</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="moonlight-intensity-slider">Інтенсивність Нічного Світла (Місяць):</label>
+                        <input type="range" id="moonlight-intensity-slider" min="0.0" max="1.0" step="0.1" value="0.2" oninput="updateSettings()">
+                        <span id="moonlight-intensity-value">0.2x</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="light-source-radius-slider">Радіус Світла від Блоків (Смолоскипи/Лава):</label>
+                        <input type="range" id="light-source-radius-slider" min="0.5" max="5.0" step="0.5" value="2.0" oninput="updateSettings()">
+                        <span id="light-source-radius-value">2.0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-panel">
+                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
+        </div>
+
+        <div id="fog" class="tab-content">
+            <div class="controls-panel">
+                <h2 class="section-header">🌫️ Налаштування Туману та Глобальних Ефектів</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="fog-density-slider">Щільність Туману (Fog Density):</label>
+                        <input type="range" id="fog-density-slider" min="0.0" max="1.0" step="0.1" value="0.2" oninput="updateSettings()">
+                        <span id="fog-density-value">0.2</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="fog-color-picker">Колір Туману:</label>
+                        <input type="color" id="fog-color-picker" value="#A0B9C9" oninput="updateSettings()">
+                        <span id="fog-color-value">#A0B9C9</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="sky-color-picker">Колір Неба (Ambient Sky Color):</label>
+                        <input type="color" id="sky-color-picker" value="#66AADD" oninput="updateSettings()">
+                        <span id="sky-color-value">#66AADD</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="saturation-slider">Загальна Насиченість Кольорів:</label>
+                        <input type="range" id="saturation-slider" min="0.0" max="2.0" step="0.1" value="1.0" oninput="updateSettings()">
+                        <span id="saturation-value">1.0x</span>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-panel">
+                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
+        </div>
+        
+        <div id="combiner" class="tab-content">
+            <div class="controls-panel" style="flex-basis: 100%;">
+                <h2 class="section-header">🔗 Об'єднання та Завантаження</h2>
+                <p>Натисніть кнопку, щоб створити фінальний пакет. Вибрані функції (перемикачі) будуть враховані для максимальної оптимізації. **Генерація відбудеться миттєво.**</p>
+
+                <ul id="config-list">
+                    <li>Вода & Анімація (Shaders): <span id="water-status" class="status-ready">Збережено</span></li>
+                    <li>Освітлення (Shaders): <span id="lighting-status" class="status-ready">Збережено</span></li>
+                    <li>Туман (Shaders): <span id="fog-status" class="status-ready">Збережено</span></li>
+                </ul>
+
+                <button class="download-btn" onclick="combineAndDownloadPack()">
+                    ✅ СТВОРИТИ MASTER SHADER PACK (.mcpack)
+                </button>
+                <p id="status-message" style="text-align: center; margin-top: 15px;"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ГЛОБАЛЬНИЙ ОБ'ЄКТ, ЩО ЗБЕРІГАЄ ВСІ НАЛАШТУВАННЯ
+        let currentSettings = {};
+
+        // Мапування ID елементів на ключі об'єкта
+        const UI_MAP = {
+            // Checkboxes
+            'enable-water-reflection': 'bool', 'enable-pbr': 'bool', 'enable-sway-animation': 'bool', 'enable-godrays': 'bool',
+
+            // Water
+            'water-realism-slider': 'Рівень {value}', 'water-depth-slider': '{value} м', 'ripple-intensity-slider': '{value}', 
+            
+            // Animation
+            'grass-sway-speed-slider': '{value}x', 'leaves-sway-amp-slider': '{value}', 'cloud-speed-slider': '{value}x', 
+
+            // Lighting
+            'pbr-reflectivity-slider': '{value}', 'sunlight-intensity-slider': '{value}x', 'moonlight-intensity-slider': '{value}x', 'light-source-radius-slider': '{value}', 
+
+            // Fog/Global
+            'fog-density-slider': '{value}', 'fog-color-picker': '{value}', 'sky-color-picker': '{value}', 'saturation-slider': '{value}x',
+        };
+        
+        // --- Утиліти та Кольорові Перетворення ---
+
+        function generateUUID() {
+            if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
+        // РЯДОК 344: Виправлення помилки substring
+        function hexToRgbArray(hex) {
+            // Перевірка, щоб уникнути помилки, якщо hex не визначено
+            if (!hex || typeof hex !== 'string' || hex.length < 7) {
+                console.error("Invalid HEX color provided:", hex);
+                return [0, 0, 0]; // Повертаємо чорний колір за замовчуванням
+            }
+            const bigint = parseInt(hex.substring(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return [r, g, b];
+        }
+
+        function hexToNormalizedRgb(hex) {
+            const [r, g, b] = hexToRgbArray(hex);
+            return [(r / 255.0).toFixed(4), (g / 255.0).toFixed(4), (b / 255.0).toFixed(4)];
+        }
+
+        // --- Логіка Оновлення ---
+        
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (const content of tabcontent) {
+                content.style.display = "none";
+            }
+            const tablinks = document.getElementsByClassName("tab-button");
+            for (const link of tablinks) {
+                link.classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "flex"; 
+            evt.currentTarget.classList.add("active");
+        }
+
+        // ПОВНІСТЮ ОНОВЛЕНА ФУНКЦІЯ UPDATESETTINGS ДЛЯ НАДІЙНОЇ ІНІЦІАЛІЗАЦІЇ
+        function updateSettings() {
+            // Очищення об'єктів
+            currentSettings.water = {};
+            currentSettings.lighting = {};
+            currentSettings.fog = {};
+            currentSettings.animation = {};
+            currentSettings.features = {}; 
+
+            // Ітерація через UI_MAP для зчитування всіх значень за замовчуванням/поточних значень
+            for (const id in UI_MAP) {
+                const element = document.getElementById(id);
+                if (!element) continue;
+
+                let value;
+                const isCheckbox = element.type === 'checkbox';
+
+                if (isCheckbox) {
+                    value = element.checked;
+                } else {
+                    value = element.value;
+                }
+
+                // Збереження в глобальний об'єкт (ІНІЦІАЛІЗАЦІЯ)
+                const finalKey = id.replace(/-/g, '');
+
+                if (isCheckbox) {
+                    currentSettings.features[finalKey] = value;
+                } else if (id.includes('water')) {
+                    currentSettings.water[finalKey] = value;
+                } else if (id.includes('ripple') || id.includes('sway') || id.includes('cloud')) {
+                    currentSettings.animation[finalKey] = value;
+                } else if (id.includes('pbr') || id.includes('sunlight') || id.includes('moonlight') || id.includes('light-source')) {
+                    currentSettings.lighting[finalKey] = value;
+                } else if (id.includes('fog') || id.includes('saturation') || id.includes('sky')) {
+                    currentSettings.fog[finalKey] = value;
+                }
+
+                // Оновлення UI спанів
+                const spanId = id.replace('-slider', '').replace('-picker', '').replace('enable-', '') + '-value';
+                const span = document.getElementById(spanId);
+
+                if (span && !isCheckbox) {
+                    const valueText = (id === 'water-realism-slider') ? 'Рівень ' + value : UI_MAP[id].replace('{value}', value);
+                    span.textContent = valueText;
+                }
+            }
+        }
+        
+        // --- Логіка Генерації JSON ---
+
+        function createWaterConfigJson(w, a, f) {
+            const swayAmplitude = f.enableswayanimation ? parseFloat(a.leavesswayamp) : 0.0;
+            
+            return JSON.stringify({
+                "water_config": {
+                    "u_water_realism_level": f.enablewaterreflection ? parseInt(w.waterrealism) : 0, 
+                    "u_water_depth": parseFloat(w.waterdepth),
+                    "u_ripple_amplitude": f.enableswayanimation ? parseFloat(a.rippleintensity) : 0.0,
+                    
+                    "u_grass_sway_speed": f.enableswayanimation ? parseFloat(a.grassswayspeed) : 0.0, 
+                    "u_leaves_sway_amplitude": swayAmplitude,
+                    "u_cloud_speed": parseFloat(a.cloudspeed), 
+
+                    "u_enable_reflection": f.enablewaterreflection, 
+                }
+            }, null, 4);
+        }
+
+        function createLightingConfigJson(settings, f) {
+            const godRayIntensity = f.enablegodrays ? 0.5 : 0.0; 
+
+            return JSON.stringify({
+                "lighting_config": {
+                    "u_sun_intensity": parseFloat(settings.sunlightintensity),
+                    "u_moon_intensity": parseFloat(settings.moonlightintensity),
+                    "u_light_source_radius": parseFloat(settings.lightsourceradius),
+
+                    "u_pbr_reflectivity": f.enablepbr ? parseFloat(settings.pbrreflectivity) : 0.0,
+                    "u_god_ray_intensity": godRayIntensity,
+                }
+            }, null, 4);
+        }
+
+        // РЯДОК 459: Викликається з надійно ініціалізованими значеннями
+        function createFogConfigJson(settings) {
+            const fogRgb = hexToNormalizedRgb(settings.fogcolor);
+            const skyRgb = hexToNormalizedRgb(settings.skycolor);
+            return JSON.stringify({
+                "fog_config": {
+                    "u_fog_density": parseFloat(settings.fogdensity),
+                    "u_fog_color_rgb": fogRgb,
+                    "u_sky_color_rgb": skyRgb,
+                    "u_global_saturation": parseFloat(settings.saturation)
+                }
+            }, null, 4);
+        }
+
+        function createMasterManifest(headerUUID, moduleUUID) {
+             return JSON.stringify({
+                "format_version": 2,
+                "header": {
+                    "name": "Master Shader Pack (v6.1 - Fixed)",
+                    "description": "Об'єднаний пакет конфігурацій шейдерів. Виправлено помилку ініціалізації кольору.",
+                    "uuid": headerUUID,
+                    "version": [1, 0, 0],
+                    "min_engine_version": [1, 19, 0]
+                },
+                "modules": [
+                    {"type": "resources", "uuid": moduleUUID, "version": [1, 0, 0]}
+                ]
+            }, null, 4);
+        }
+
+        // --- Об'єднання та Завантаження ---
+
+        async function combineAndDownloadPack() {
+            document.getElementById('status-message').style.color = 'orange';
+            document.getElementById('status-message').textContent = 'Генерація JSON та стиснення ZIP... Майже готово!';
+
+            // Викликаємо updateSettings для гарантії, що всі значення заповнені перед генерацією
+            updateSettings();
+
+            const zip = new JSZip();
+            const headerUUID = generateUUID();
+            const moduleUUID = generateUUID();
+
+            // 1. Створення JSON-файлів
+            const waterConfig = createWaterConfigJson(currentSettings.water, currentSettings.animation, currentSettings.features);
+            const lightingConfig = createLightingConfigJson(currentSettings.lighting, currentSettings.features);
+            const fogConfig = createFogConfigJson(currentSettings.fog); // Тепер має працювати
+
+            // 2. Додавання Master Manifest та JSON-файлів у ZIP
+            zip.file("manifest.json", createMasterManifest(headerUUID, moduleUUID));
+            zip.file("shader_configs/water_config.json", waterConfig);
+            zip.file("shader_configs/lighting_config.json", lightingConfig);
+            zip.file("shader_configs/fog_config.json", fogConfig);
+
+            // 3. Стиснення та Завантаження
+            try {
+                const content = await zip.generateAsync({type: "blob"});
+                saveAs(content, "master_shader_pack_v6_1_fixed.mcpack");
+
+                document.getElementById('status-message').style.color = 'var(--mc-green)';
+                document.getElementById('status-message').textContent = '✅ Master Pack v6.1 успішно згенеровано та завантажено!';
+            } catch (error) {
+                document.getElementById('status-message').style.color = 'red';
+                document.getElementById('status-message').textContent = `❌ Помилка: ${error.message}`;
+                console.error(error);
+            }
+        }
+
+        // Ініціалізація сайту
+        window.onload = () => {
+            updateSettings(); 
+            openTab({currentTarget: document.querySelector('.tab-button')}, 'water'); 
+        };
+    </script>
+</body>
+</html>
