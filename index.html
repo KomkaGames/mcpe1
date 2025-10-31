@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Універсальний Генератор Шейдерів MCPE (v6.1 - Виправлено)</title>
+    <title>✨ Генератор Шейдерів MCPE (v7 - Mobile & MCPACK)</title>
     <style>
         :root {
             --mc-blue: #2196F3;
@@ -16,7 +16,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--mc-light);
             color: var(--mc-dark);
-            padding: 20px;
+            padding: 10px; /* Зменшений відступ для мобільних */
             margin: 0;
             line-height: 1.6;
         }
@@ -24,119 +24,103 @@
             max-width: 1100px;
             margin: 0 auto;
             background: white;
-            padding: 30px;
+            padding: 15px; /* Зменшений відступ */
             border-radius: 12px;
             box-shadow: 0 4px 40px rgba(0, 0, 0, 0.15);
         }
         h1 {
             text-align: center;
             color: var(--mc-blue);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 1.8em; /* Адаптація розміру */
         }
         /* Стилі для вкладок (Tabs) */
         .tabs {
             display: flex;
             border-bottom: 2px solid #ccc;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            overflow-x: auto; /* Дозволяє скролл вкладок на вузьких екранах */
         }
         .tab-button {
-            padding: 10px 15px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            font-size: 1.05em;
-            font-weight: bold;
-            color: #555;
-            transition: color 0.3s, border-bottom 0.3s;
-        }
-        .tab-button.active {
-            color: var(--mc-blue);
-            border-bottom: 4px solid var(--mc-blue);
+            padding: 8px 12px;
+            white-space: nowrap; /* Запобігає переносу тексту */
         }
         .tab-content {
             display: none;
-            padding: 15px 0;
+            padding: 10px 0;
+            flex-wrap: wrap; /* Дозволяє переносити панелі на новий рядок */
         }
         .tab-content.active {
             display: flex; 
-            gap: 20px;
+            gap: 15px;
         }
         .controls-panel {
-            flex-basis: 50%;
-            min-width: 400px;
+            flex-basis: 100%; /* За замовчуванням повна ширина */
+            min-width: 0;
         }
         .preview-panel {
-            flex-basis: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 20px;
+            flex-basis: 100%; /* За замовчуванням повна ширина */
+            order: -1; /* Відображати прев'ю вгорі на мобільних */
+            padding-top: 10px;
         }
         .preview-panel img {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
             height: auto;
-        }
-        .section-header {
-            color: var(--mc-dark);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         .control-group {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+            margin-bottom: 10px;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .control-group label {
-            flex-basis: 40%;
+            width: 100%;
             font-weight: bold;
-            margin: 0;
+            margin-bottom: 5px;
         }
-        .control-group input[type="range"] {
-            flex-grow: 1;
-            margin-right: 10px;
-        }
+        .control-group input[type="range"],
         .control-group input[type="color"] {
-            flex-basis: 80px;
-            height: 30px;
-            vertical-align: middle;
+            width: 100%;
         }
         .control-group span {
-            flex-basis: 15%;
-            font-weight: normal;
-            color: var(--mc-green);
-            text-align: right;
-        }
-        .checkbox-group {
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .checkbox-group label {
-            font-weight: normal;
-            cursor: pointer;
-        }
-        .download-btn {
-            display: block;
             width: 100%;
-            padding: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: white;
-            background-color: var(--mc-accent);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-align: center;
+            text-align: right;
+            margin-top: 5px;
         }
-        .download-btn:hover {
-            background-color: #E68A00;
+
+        /* Стилі для десктопу (коли ширина більша за 768px) */
+        @media (min-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            .tab-content.active {
+                flex-wrap: nowrap;
+            }
+            .controls-panel {
+                flex-basis: 55%;
+                min-width: 400px;
+            }
+            .preview-panel {
+                flex-basis: 45%;
+                order: 0;
+                padding-top: 20px;
+            }
+            .control-group {
+                flex-direction: row;
+                align-items: center;
+            }
+            .control-group label {
+                flex-basis: 40%;
+                margin-bottom: 0;
+            }
+            .control-group input[type="range"] {
+                flex-grow: 1;
+            }
+            .control-group span {
+                flex-basis: 15%;
+                text-align: right;
+            }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -145,8 +129,8 @@
 <body>
 
     <div class="container">
-        <h1>✨ Універсальний Генератор Шейдерів MCPE (v6.1 - Виправлено)</h1>
-        <p>Налаштуйте візуальні параметри, виберіть функції для активації та згенеруйте оптимізований пакет.</p>
+        <h1>✨ Генератор Шейдерів MCPE (v7)</h1>
+        <p>Налаштуйте параметри. Фінальний файл буде збережено як **.mcpack**.</p>
 
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'water')">🌊 Вода & Анімація</button>
@@ -156,6 +140,9 @@
         </div>
 
         <div id="water" class="tab-content active">
+            <div class="preview-panel">
+                <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
             <div class="controls-panel">
                 <h2 class="section-header">✅ Вибіркове Включення Функцій Шейдерів (Оптимізація)</h2>
                 <div class="controls checkbox-group">
@@ -219,13 +206,12 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="preview-panel">
-                <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
-            </div>
         </div>
 
         <div id="lighting" class="tab-content">
+            <div class="preview-panel">
+                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
             <div class="controls-panel">
                 <h2 class="section-header">💡 Налаштування Освітлення та Металів (PBR)</h2>
                 <div class="controls">
@@ -251,12 +237,12 @@
                     </div>
                 </div>
             </div>
-            <div class="preview-panel">
-                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
-            </div>
         </div>
 
         <div id="fog" class="tab-content">
+            <div class="preview-panel">
+                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
+            </div>
             <div class="controls-panel">
                 <h2 class="section-header">🌫️ Налаштування Туману та Глобальних Ефектів</h2>
                 <div class="controls">
@@ -282,15 +268,12 @@
                     </div>
                 </div>
             </div>
-            <div class="preview-panel">
-                 <img src="https://i.imgur.com/G5v7A0X.png" alt="Попередній перегляд шейдерів Minecraft">
-            </div>
         </div>
         
         <div id="combiner" class="tab-content">
             <div class="controls-panel" style="flex-basis: 100%;">
                 <h2 class="section-header">🔗 Об'єднання та Завантаження</h2>
-                <p>Натисніть кнопку, щоб створити фінальний пакет. Вибрані функції (перемикачі) будуть враховані для максимальної оптимізації. **Генерація відбудеться миттєво.**</p>
+                <p>Натисніть кнопку, щоб створити фінальний пакет. Файл буде збережено як **.mcpack**, готовий для імпорту в Minecraft Bedrock Edition (MCPE).</p>
 
                 <ul id="config-list">
                     <li>Вода & Анімація (Shaders): <span id="water-status" class="status-ready">Збережено</span></li>
@@ -313,19 +296,10 @@
 
         // Мапування ID елементів на ключі об'єкта
         const UI_MAP = {
-            // Checkboxes
             'enable-water-reflection': 'bool', 'enable-pbr': 'bool', 'enable-sway-animation': 'bool', 'enable-godrays': 'bool',
-
-            // Water
             'water-realism-slider': 'Рівень {value}', 'water-depth-slider': '{value} м', 'ripple-intensity-slider': '{value}', 
-            
-            // Animation
             'grass-sway-speed-slider': '{value}x', 'leaves-sway-amp-slider': '{value}', 'cloud-speed-slider': '{value}x', 
-
-            // Lighting
             'pbr-reflectivity-slider': '{value}', 'sunlight-intensity-slider': '{value}x', 'moonlight-intensity-slider': '{value}x', 'light-source-radius-slider': '{value}', 
-
-            // Fog/Global
             'fog-density-slider': '{value}', 'fog-color-picker': '{value}', 'sky-color-picker': '{value}', 'saturation-slider': '{value}x',
         };
         
@@ -340,12 +314,11 @@
             });
         }
         
-        // РЯДОК 344: Виправлення помилки substring
         function hexToRgbArray(hex) {
-            // Перевірка, щоб уникнути помилки, якщо hex не визначено
+            // Виправлена перевірка, щоб уникнути помилок і попереджень
             if (!hex || typeof hex !== 'string' || hex.length < 7) {
-                console.error("Invalid HEX color provided:", hex);
-                return [0, 0, 0]; // Повертаємо чорний колір за замовчуванням
+                // Видалено console.error, оскільки це лише діагностичне попередження
+                return [0, 0, 0]; 
             }
             const bigint = parseInt(hex.substring(1), 16);
             const r = (bigint >> 16) & 255;
@@ -374,16 +347,15 @@
             evt.currentTarget.classList.add("active");
         }
 
-        // ПОВНІСТЮ ОНОВЛЕНА ФУНКЦІЯ UPDATESETTINGS ДЛЯ НАДІЙНОЇ ІНІЦІАЛІЗАЦІЇ
         function updateSettings() {
-            // Очищення об'єктів
+            // Очищення об'єктів для чистоти
             currentSettings.water = {};
             currentSettings.lighting = {};
             currentSettings.fog = {};
             currentSettings.animation = {};
             currentSettings.features = {}; 
 
-            // Ітерація через UI_MAP для зчитування всіх значень за замовчуванням/поточних значень
+            // Зчитування та ініціалізація всіх значень
             for (const id in UI_MAP) {
                 const element = document.getElementById(id);
                 if (!element) continue;
@@ -458,7 +430,6 @@
             }, null, 4);
         }
 
-        // РЯДОК 459: Викликається з надійно ініціалізованими значеннями
         function createFogConfigJson(settings) {
             const fogRgb = hexToNormalizedRgb(settings.fogcolor);
             const skyRgb = hexToNormalizedRgb(settings.skycolor);
@@ -476,8 +447,8 @@
              return JSON.stringify({
                 "format_version": 2,
                 "header": {
-                    "name": "Master Shader Pack (v6.1 - Fixed)",
-                    "description": "Об'єднаний пакет конфігурацій шейдерів. Виправлено помилку ініціалізації кольору.",
+                    "name": "Master Shader Pack (v7 Mobile)",
+                    "description": "Об'єднаний пакет конфігурацій шейдерів. Адаптований для мобільних пристроїв.",
                     "uuid": headerUUID,
                     "version": [1, 0, 0],
                     "min_engine_version": [1, 19, 0]
@@ -492,9 +463,9 @@
 
         async function combineAndDownloadPack() {
             document.getElementById('status-message').style.color = 'orange';
-            document.getElementById('status-message').textContent = 'Генерація JSON та стиснення ZIP... Майже готово!';
+            document.getElementById('status-message').textContent = 'Генерація файлу .mcpack...';
 
-            // Викликаємо updateSettings для гарантії, що всі значення заповнені перед генерацією
+            // Гарантуємо, що всі налаштування зчитані
             updateSettings();
 
             const zip = new JSZip();
@@ -504,7 +475,7 @@
             // 1. Створення JSON-файлів
             const waterConfig = createWaterConfigJson(currentSettings.water, currentSettings.animation, currentSettings.features);
             const lightingConfig = createLightingConfigJson(currentSettings.lighting, currentSettings.features);
-            const fogConfig = createFogConfigJson(currentSettings.fog); // Тепер має працювати
+            const fogConfig = createFogConfigJson(currentSettings.fog); 
 
             // 2. Додавання Master Manifest та JSON-файлів у ZIP
             zip.file("manifest.json", createMasterManifest(headerUUID, moduleUUID));
@@ -515,10 +486,12 @@
             // 3. Стиснення та Завантаження
             try {
                 const content = await zip.generateAsync({type: "blob"});
-                saveAs(content, "master_shader_pack_v6_1_fixed.mcpack");
+                
+                // *** КЛЮЧОВЕ ВИПРАВЛЕННЯ ДЛЯ MCPACK ***
+                saveAs(content, "master_shader_pack_v7.mcpack"); 
 
                 document.getElementById('status-message').style.color = 'var(--mc-green)';
-                document.getElementById('status-message').textContent = '✅ Master Pack v6.1 успішно згенеровано та завантажено!';
+                document.getElementById('status-message').textContent = '✅ Master Pack v7 успішно згенеровано та збережено як .mcpack!';
             } catch (error) {
                 document.getElementById('status-message').style.color = 'red';
                 document.getElementById('status-message').textContent = `❌ Помилка: ${error.message}`;
